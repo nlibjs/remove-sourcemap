@@ -19,9 +19,22 @@ const execute = async (
 };
 
 if (!module.parent) {
-    execute(process.argv.slice(2).reverse()[0])
-    .catch((error) => {
-        console.error(error);
-        process.exit(1);
-    });
+    const args = process.argv.slice(2);
+    if (args.includes('--help') || args.includes('-h')) {
+        console.log([
+            'remove-sourcemap [options] <dir>',
+            '-h, --help     Show help',
+            '-v, --version  Output the version number',
+        ].join('\n'));
+    } else if (args.includes('--version') || args.includes('-v')) {
+        const jsonPath = path.join(__dirname, '../package.json');
+        const {version} = JSON.parse(fs.readFileSync(jsonPath, 'utf8')) as unknown as {version: string};
+        console.log(version);
+    } else {
+        execute(args[args.length - 1])
+        .catch((error) => {
+            console.error(error);
+            process.exit(1);
+        });
+    }
 }

@@ -23,7 +23,7 @@
         "remove-sourcemap": "lib/cli.js"
     },
     "scripts": {
-        "build": "tsc",
+        "build": "tsc --project tsconfig.build.json",
         "test": "ava",
         "lint": "eslint --ext .ts --ext .js src",
         "version:changelog": "conventional-changelog --preset angular --infile CHANGELOG.md --same-file --release-count 0",
@@ -56,6 +56,9 @@
         ],
         "require": [
             "ts-node/register"
+        ],
+        "files": [
+            "!**/*.module.ts"
         ]
     },
     "eslintConfig": {
