@@ -56,6 +56,9 @@
         ],
         "require": [
             "ts-node/register"
+        ],
+        "files": [
+            "!**/*.module.ts"
         ]
     },
     "eslintConfig": {

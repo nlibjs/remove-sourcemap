@@ -1,9 +1,9 @@
 import * as os from 'os';
 import * as path from 'path';
 import * as fs from 'fs';
-import * as childProcess from 'child_process';
 import ava from 'ava';
 import {walkDirectory} from '../src/walkDirectory';
+import {exec} from './exec.module';
 
 ava('execute remove-sourcemap', async (t) => {
     const baseDirectory = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'remove-sourcemap'));
@@ -22,23 +22,7 @@ ava('execute remove-sourcemap', async (t) => {
         'body {}',
     ].join('\n'));
     await fs.promises.writeFile(path.join(directory, 'c/e.css.map'), '{}');
-    await new Promise((resolve, reject) => {
-        childProcess.exec(
-            [
-                'npx ts-node',
-                path.join(__dirname, '../src/cli.ts'),
-                directory,
-            ].join(' '),
-            (error, stdout, stderr) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    t.log({stdout, stderr});
-                    resolve();
-                }
-            },
-        );
-    });
+    await exec(`npx ts-node ${path.join(__dirname, '../src/cli.ts')} ${directory}`);
     const result: {[name: string]: string} = {};
     for await (const file of walkDirectory(directory)) {
         result[path.relative(directory, file)] = (await fs.promises.readFile(file, 'utf8')).trim();
